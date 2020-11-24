@@ -1,7 +1,5 @@
 const Post = require('../models/postModel');
-const https = require('https');
-var fonctions = require('../fonctions/fonctions.js');
-
+const loremApiProvider = require('../providers/fonctions');
 
 exports.list_all_posts = (req, res) => {
     Post.find({}, (error, posts) => {
@@ -18,24 +16,24 @@ exports.list_all_posts = (req, res) => {
     })
 }
 
-exports.create_a_post = (req, res) => {
+exports.create_a_post = async (req, res) => {
     let new_post = new Post(req.body);
-    if(!new_post.content)   {
-        fonctions.getcontent('https://loripsum.net/api/plaintext', new_post, res);
-    } else {
-        new_post.save((error, post) => {
-            if (error) {
-                res.status(500);
-                console.log(error);
-                res.json({
-                    message: "Erreur serveur."
-                })
-            } else {
-                res.status(201);
-                res.json(post)
-            }
-        })
+    const randomTextPromise = loremApiProvider.getRandomText(res)
+    if (!new_post.content) {
+        new_post.content = await randomTextPromise;
     }
+    new_post.save((error, post) => {
+        if (error) {
+            res.status(500);
+            console.log(error);
+            res.json({
+                message: "Erreur serveur."
+            })
+        } else {
+            res.status(201);
+            res.json(post)
+        }
+    })
 }
 
 exports.get_a_post = (req, res) =>  {
