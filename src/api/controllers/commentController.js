@@ -1,7 +1,7 @@
-const Post = require('../models/postModel');
+const Comment = require('../models/commentModel');
 
-exports.list_all_posts = (req, res) => {
-    Post.find({}, (error, posts) => {
+exports.list_all_comments = (req, res) => {
+    Comment.find({post_id: req.params.post_id}, (error, comments) => {
         if (error) {
             res.status(500);
             console.log(error);
@@ -10,15 +10,16 @@ exports.list_all_posts = (req, res) => {
             })
         } else {
             res.status(200);
-            res.json(posts)
+            res.json(comments)
         }
     })
 }
 
-exports.create_a_post = (req, res) => {
-    let new_post = new Post(req.body);
+exports.create_a_comment = (req, res) => {
+    let new_comment = new Comment(req.body);
+    new_comment.post_id = req.params.post_id;
 
-    new_post.save((error, post) => {
+    new_comment.save((error, comment) => {
         if (error) {
             res.status(500);
             console.log(error);
@@ -27,13 +28,13 @@ exports.create_a_post = (req, res) => {
             })
         } else {
             res.status(201);
-            res.json(post)
+            res.json(comment)
         }
     })
 }
 
-exports.get_a_post = (req, res) =>  {
-    Post.findById(req.params.post_id, (error, post) => {
+exports.get_a_comment = (req, res) =>  {
+    Comment.findById(req.params.comment_id, (error, comment) => {
         if(error){
             res.status(500);
             console.log(error);
@@ -41,13 +42,13 @@ exports.get_a_post = (req, res) =>  {
           }
           else{
             res.status(200);
-            res.json(post)
+            res.json(comment)
           }
     })
 }
 
-exports.update_a_post = (req, res) => {
-    Post.findByIdAndUpdate(req.params.post_id, req.body, {new: true}, (error, post) => {
+exports.update_a_comment = (req, res) => {
+    Comment.findByIdAndUpdate(req.params.comment_id, req.body, {new: true}, (error, comment) => {
         if(error)   {
             res.status(500);
             console.log(error);
@@ -55,13 +56,13 @@ exports.update_a_post = (req, res) => {
         }
         else{
             res.status(200);
-            res.json(post)
+            res.json(comment)
         }
     })
 }
 
-exports.delete_a_post = (req, res) => {
-    Post.findByIdAndDelete(req.params.post_id, (error, post) => {
+exports.delete_a_comment = (req, res) => {
+    Comment.findByIdAndDelete(req.params.comment_id, (error, comment) => {
       if(error){
         res.status(500);
         console.log(error);
@@ -69,7 +70,7 @@ exports.delete_a_post = (req, res) => {
       }
       else{
         res.status(200);
-        res.json({message: "Article supprimé"});
+        res.json({message: "Commentaire supprimé"});
       }
     })
   }

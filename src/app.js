@@ -12,7 +12,10 @@ const bodyParser = require('body-parser');
 server.use(bodyParser.urlencoded());
 server.use(bodyParser.json());
 
+const commentRoute = require('./api/routes/commentRoute');
 const postRoute = require('./api/routes/postRoute');
+
 postRoute(server);
+commentRoute(server);
 
 server.listen(port, hostname);
